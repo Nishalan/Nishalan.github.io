@@ -1,0 +1,703 @@
+<!--/
+    * Created by: Nishalan Nair Revi Andran
+    * Email: revia001@umn.edu
+    * BS Computer Science, University of Minnesota-Twin Cities
+    */-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <title>Campus Resources</title>
+        <link rel ="stylesheet" type ="text/css" href ="styles.css" />
+        <script type="text/javascript"></script>
+    </head>
+    <body>
+        <div id="flopanel">
+            <b>Resource: </b>
+            <select id="start" onchange="calcRoute()">
+                <option value="44.974889, -93.237340">Aurora Center</option>
+                <option value="44.972004, -93.234216">Boynton Health Services</option>
+                <option value="44.974284, -93.237219">CAPE (Center for Academic Planning and Exploration)</option>
+                <option value="44.975199, -93.227999">Disability Services</option>
+                <option value="44.975073, -93.237420">Gay Lesbian Bisexual Transgender Ally Program Office</option>
+                <option value="44.972178, -93.236624">Housing</option>
+                <option value="44.971142, -93.244372">ISSS (International Student & Scholar Services)</option>
+                <option value="44.977376, -93.235904">MELP (Minnesota English Language Program)</option>
+                <option value="44.973927, -93.237338">Office for Student Engagement </option>
+                <option value="44.975718, -93.230014">Recreation Center</option>
+				<option value="44.974762, -93.237249">SASS (Student Academic Success Services)</option>
+                <option value="44.975260, -93.236265">SMART Commons </option>
+                <option value="44.977168, -93.235949">Student Writing Support (Writing center)</option>
+                <option value="44.972912, -93.235770">SUA (Student Union & Activities)</option>
+				<option value="44.977945, -93.235270">Tandem Plus</option>
+                <option value="44.973965, -93.230071">TCF Bank</option>
+                <option value="44.975159, -93.237094">UCCS (University Counseling & Consulting Services)</option>
+                <option value="44.972680, -93.243287">University Student Legal Service</option>
+				<option value="44.970934, -93.243610">Wilson Library</option>
+                <option value="44.975260, -93.236265">Walter Library</option>
+                <option value="44.971694, -93.231344">Bio-Medical Library</option>
+                <option value="44.973106, -93.242983">Andersen Library</option>
+				<option value="44.973007, -93.244050">Law Library</option>
+                <option value="44.975265, -93.236208">Science & Engineering Library</option>
+                <option value="44.974476, -93.234713">Mathematics Library</option>
+                <option value="44.970819, -93.241792">Music Library</option>
+            </select>
+            <br/>
+            <b>Mode of Travel: </b>
+            <select id="travel" onchange="calcRoute()">
+                <option value="w">Walking</option>
+                <option value="b">Bicycling</option>
+                <option value="t">Transit</option>
+                <option value="d">Driving</option>
+            </select>
+            
+        </div>
+        
+        
+        
+        <div id="map"></div>
+        <script>
+            var map
+            var directionsService 
+            var directionsDisplay 
+            var myMarker
+            
+            
+			alert("The page will load once you close this box.\n\n" +
+			"Instructions: \n\n- Select your destination on the left, your mode of travel, then click your location on the map to get directions\n\n"+
+			"- You can also click on a marker below to get more information about various campus resources")
+			
+            function initMap() {
+            	var directionsService = new google.maps.DirectionsService
+            	var directionsDisplay = new google.maps.DirectionsRenderer	
+            	
+            	map = new google.maps.Map(document.getElementById('map'), { 
+            		center: {lat: 44.975167, lng: -93.236240},
+            		zoom: 16,
+            		mapTypeControl: false
+            	})
+            	
+            	directionsDisplay.setMap(map)
+            	
+            	var onChangeHandler = function() {
+            		calculateAndDisplayRoute(directionsService, directionsDisplay)
+            	}
+            	
+            	document.getElementById('start').addEventListener('change', onChangeHandler)
+            	document.getElementById('travel').addEventListener('change', onChangeHandler)
+            	
+            	var image = 'icon.png'
+            			
+            	google.maps.event.addListener(map, 'click', function(event) {
+            		if(myMarker != null){
+            			myMarker.setMap(null)
+            		}
+            		
+            		myMarker = new google.maps.Marker({
+            			position: (event.latLng), 
+            			map: map,
+            			title: 'Location: ' +event.latLng.toString()
+            		})			
+            		
+            		var contentString = 'You Are Here'
+            	
+            		var infowindow = new google.maps.InfoWindow({
+            			content: contentString
+            		});
+            		
+            		myMarker.addListener('click', function() {
+            			infowindow.open(map, myMarker);
+            		});
+            		
+            		calculateAndDisplayRoute(directionsService, directionsDisplay)
+            		
+            	})
+            	
+            	var one = new google.maps.Marker({
+            		position: {lat: 44.977276, lng: -93.232266},
+            		map: map,
+            		title: 'Aurora Center',
+            		icon: image 
+            		
+            	})
+            	var contentString1 = '<div class="box" >' +
+            		'<h2>Aurora Center</h2>'+
+            		'<img src="images/aurora.jpg" ;">' +
+            		'<h3>Provides services for victims/survivors/concerned people of sexual and relationship violence</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow1 = new google.maps.InfoWindow({
+            		content: contentString1
+            	});
+            	
+            	one.addListener('click', function() {
+            	infowindow1.open(map, one);
+            	});
+            	//-----------------
+            	
+            	var two = new google.maps.Marker({
+            		position: {lat: 44.972004, lng: -93.234216},
+            		map: map,
+            		title: 'Boynton Health Services',
+            		icon: image 
+            		
+            	})
+            	var contentString2 = '<div class="box" >' +
+            		'<h2>Boynton Health Services</h2>'+
+            		'<img src="images/boynton.jpg" ;">' +
+            		'<h3>Provides medical help and assistance with stress management</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow2 = new google.maps.InfoWindow({
+            		content: contentString2
+            	});
+            	
+            	two.addListener('click', function() {
+            	infowindow2.open(map, two);
+            	});
+            	//-----------------
+            	
+            	var three = new google.maps.Marker({
+            		position: {lat: 44.974284, lng: -93.237219},
+            		map: map,
+            		title: 'CAPE',
+            		icon: image 
+            		
+            	})
+            	var contentString3 = '<div class="box" >' +
+            		'<h2>Center for Academic Planning and Exploration</h2>'+
+            		'<img src="images/cape.jpeg" ;">' +
+            		'<h3>Provides major and career exploration</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow3 = new google.maps.InfoWindow({
+            		content: contentString3
+            	});
+            	
+            	three.addListener('click', function() {
+            	infowindow3.open(map, three);
+            	});
+            	//-----------------
+            	
+            	var four = new google.maps.Marker({
+            		position: {lat: 44.975199, lng: -93.227999 },
+            		map: map,
+            		title: 'Disability Services ',
+            		icon: image 
+            		
+            	})
+            	var contentString4 = '<div class="box" >' +
+            		'<h2>Disability Services </h2>'+
+            		'<img src="images/" ;">' +
+            		'<h3>Provides help for students with disabilities</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow4 = new google.maps.InfoWindow({
+            		content: contentString4
+            	});
+            	
+            	four.addListener('click', function() {
+            	infowindow4.open(map, four);
+            	});
+            	//-----------------
+            	
+            	var five = new google.maps.Marker({
+            		position: {lat: 44.975073, lng: -93.237420},
+            		map: map,
+            		title: 'GLBTA',
+            		icon: image 
+            		
+            	})
+            	var contentString5 = '<div class="box" >' +
+            		'<h2>Gay Lesbian Bisexual Transgender Ally Program Office</h2>'+
+            		'<img src="images/glbta.png" ;">' +
+            		'<h3>Provides events and advising</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow5 = new google.maps.InfoWindow({
+            		content: contentString5
+            	});
+            	
+            	five.addListener('click', function() {
+            	infowindow5.open(map, five);
+            	});
+            	//-----------------
+            	
+            	var six = new google.maps.Marker({
+            		position: {lat: 44.972178, lng: -93.236624},
+            		map: map,
+            		title: 'Housing',
+            		icon: image 
+            		
+            	})
+            	var contentString6 = '<div class="box" >' +
+            		'<h2>Housing</h2>'+
+            		'<img src="images/housing.jpeg" ;">' +
+            		'<h3>Provides assistance and resources for housing issues</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow6 = new google.maps.InfoWindow({
+            		content: contentString6
+            	});
+            	
+            	six.addListener('click', function() {
+            	infowindow6.open(map, six);
+            	});
+            	//-----------------
+            	
+            	var sev = new google.maps.Marker({
+            		position: {lat: 44.971142, lng: -93.244372},
+            		map: map,
+            		title: 'ISSS',
+            		icon: image 
+            		
+            	})
+            	var contentString7 = '<div class="box" >' +
+            		'<h2>International Student & Scholar Services</h2>'+
+            		'<img src="images/ISSS.jpg" ;">' +
+            		'<h3>Provides advising, counseling and programs</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow7 = new google.maps.InfoWindow({
+            		content: contentString7
+            	});
+            	
+            	sev.addListener('click', function() {
+            	infowindow7.open(map, sev);
+            	});
+            	//-----------------
+            	
+            	var eig = new google.maps.Marker({
+            		position: {lat: 44.977376, lng: -93.235904},
+            		map: map,
+            		title: 'MELP',
+            		icon: image 
+            		
+            	})
+            	var contentString8 = '<div class="box" >' +
+            		'<h2>Minnesota English Language Program</h2>'+
+            		'<img src="images/" ;">' +
+            		'<h3>Provides English as second language classes and help</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow8 = new google.maps.InfoWindow({
+            		content: contentString8
+            	});
+            	
+            	eig.addListener('click', function() {
+            	infowindow8.open(map, eig);
+            	});
+            	//-----------------
+            	
+            	var nin = new google.maps.Marker({
+            		position: {lat: 44.973927, lng: -93.237338},
+            		map: map,
+            		title: 'Student Engagement',
+            		icon: image 
+            		
+            	})
+            	var contentString9 = '<div class="box" >' +
+            		'<h2>Office of Student Engagement</h2>'+
+            		'<img src="images/engage.jpeg" ;">' +
+            		'<h3>Provides volunteer opportunities</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow9 = new google.maps.InfoWindow({
+            		content: contentString9
+            	});
+            	
+            	nin.addListener('click', function() {
+            	infowindow9.open(map, nin);
+            	});
+            	//-----------------
+            	
+            	var ten = new google.maps.Marker({
+            		position: {lat: 44.975718, lng: -93.230014},
+            		map: map,
+            		title: 'Rec Center',
+            		icon: image 
+            		
+            	})
+            	var contentString10 = '<div class="box" >' +
+            		'<h2>Recreation Center</h2>'+
+            		'<img src="images/rec.jpg" ;">' +
+            		'<h3>Provides places for exercise and sports</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow10 = new google.maps.InfoWindow({
+            		content: contentString10
+            	});
+            	
+            	ten.addListener('click', function() {
+            	infowindow10.open(map, ten);
+            	});
+            	//-----------------
+            	
+            	var ele = new google.maps.Marker({
+            		position: {lat: 44.974762, lng: -93.237249},
+            		map: map,
+            		title: 'Academic Success',
+            		icon: image 
+            		
+            	})
+            	var contentString11 = '<div class="box" >' +
+            		'<h2>Student Academic Success Services</h2>'+
+            		'<img src="images/" >' +
+            		'<h3>Provides study skills workshops, classes and individual help</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow11 = new google.maps.InfoWindow({
+            		content: contentString11
+            	});
+            	
+            	ele.addListener('click', function() {
+            	infowindow11.open(map, ele);
+            	});
+            	//-----------------
+            	
+            	var twl = new google.maps.Marker({
+            		position: {lat: 44.975260, lng: -93.236265},
+            		map: map,
+            		title: 'SMART Commons',
+            		icon: image 
+            		
+            	})
+            	var contentString12 = '<div class="box" >' +
+            		'<h2>SMART Commons/ Walter Library</h2>'+
+            		'<img src="images/lib.png">' +
+            		'<h3>Provides space for studying and receiving tutoring help. <br/ > Provides academic resources, internet and a place to study</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow12 = new google.maps.InfoWindow({
+            		content: contentString12
+            	});
+            	
+            	twl.addListener('click', function() {
+            	infowindow12.open(map, twl);
+            	});
+            	//-----------------
+            	
+            	var thr = new google.maps.Marker({
+            		position: {lat: 44.977168, lng: -93.235949},
+            		map: map,
+            		title: 'Writing Center',
+            		icon: image 
+            		
+            	})
+            	var contentString13 = '<div class="box" >' +
+            		'<h2>Student Writing Support</h2>'+
+            		'<img src="images/writ.gif" >' +
+            		'<h3>Provides free feedback, editing and grammar proofreading of papers</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow13 = new google.maps.InfoWindow({
+            		content: contentString13
+            	});
+            	
+            	thr.addListener('click', function() {
+            	infowindow13.open(map, thr);
+            	});
+            	//-----------------
+            	
+            	var frtn = new google.maps.Marker({
+            		position: {lat: 44.972912, lng: -93.235770},
+            		map: map,
+            		title: 'SUA',
+            		icon: image 
+            		
+            	})
+            	var contentString14 = '<div class="box" >' +
+            		'<h2>Student Union & Activities</h2>'+
+            		'<img src="images/sua.jpeg" >' +
+            		'<h3>Provides social activities</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow14 = new google.maps.InfoWindow({
+            		content: contentString14
+            	});
+            	
+            	frtn.addListener('click', function() {
+            	infowindow14.open(map, frtn);
+            	});
+            	//-----------------
+            	
+            	var ftn = new google.maps.Marker({
+            		position: {lat: 44.977945, lng: -93.235270},
+            		map: map,
+            		title: 'Tandem Plus',
+            		icon: image 
+            		
+            	})
+            	var contentString15 = '<div class="box" >' +
+            		'<h2>Tandem Plus</h2>'+
+            		'<img src="images/tandem.jpg" >' +
+            		'<h3>Provides language partners</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow15 = new google.maps.InfoWindow({
+            		content: contentString15
+            	});
+            	
+            	ftn.addListener('click', function() {
+            	infowindow15.open(map, ftn);
+            	});
+            	//-----------------
+            	
+            	var sxt = new google.maps.Marker({
+            		position: {lat: 44.973965, lng: -93.230071 },
+            		map: map,
+            		title: 'TCF Bank',
+            		icon: image 
+            		
+            	})
+            	var contentString16 = '<div class="box" >' +
+            		'<h2>TCF Bank</h2>'+
+            		'<img src="images/tcf.png" >' +
+            		'<h3>Provides banking, budgeting and financial information</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow16 = new google.maps.InfoWindow({
+            		content: contentString16
+            	});
+            	
+            	sxt.addListener('click', function() {
+            	infowindow16.open(map, sxt);
+            	});
+            	//-----------------
+            	
+            	var svt = new google.maps.Marker({
+            		position: {lat: 44.975159, lng: -93.237094 },
+            		map: map,
+            		title: 'UCCS',
+            		icon: image 
+            		
+            	})
+            	var contentString17 = '<div class="box" >' +
+            		'<h2>University Counseling & Consulting Services</h2>'+
+            		'<img src="images/" >' +
+            		'<h3>Provides personal, academic and career counseling</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow17 = new google.maps.InfoWindow({
+            		content: contentString17
+            	});
+            	
+            	svt.addListener('click', function() {
+            	infowindow17.open(map, svt);
+            	});
+            	//-----------------
+            	
+            	var egt = new google.maps.Marker({
+            		position: {lat: 44.972680, lng: -93.243287 },
+            		map: map,
+            		title: 'Legal Services',
+            		icon: image 
+            		
+            	})
+            	var contentString18 = '<div class="box" >' +
+            		'<h2>University Student Legal Service</h2>'+
+            		'<img src="images/legal.jpg" >' +
+            		'<h3>Provides legal representation and legal advice to eligible students</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow18 = new google.maps.InfoWindow({
+            		content: contentString18
+            	});
+            	
+            	egt.addListener('click', function() {
+            	infowindow18.open(map, egt);
+            	});
+            	//-----------------
+            	
+            	var nnt = new google.maps.Marker({
+            		position: {lat: 44.970934, lng: -93.243610 },
+            		map: map,
+            		title: 'Wilson Library',
+            		icon: image 
+            		
+            	})
+            	var contentString19 = '<div class="box" >' +
+            		'<h2>Wilson Library</h2>'+
+            		'<img src="images/lib.png" >' +
+            		'<h3>Provides academic resources, internet and a place to study</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow19 = new google.maps.InfoWindow({
+            		content: contentString19
+            	});
+            	
+            	nnt.addListener('click', function() {
+            	infowindow19.open(map, nnt);
+            	});
+            	//-----------------
+            	
+            	var twn = new google.maps.Marker({
+            		position: {lat: 44.971694, lng: -93.231344 },
+            		map: map,
+            		title: 'Bio-Medical Library',
+            		icon: image 
+            		
+            	})
+            	var contentString20 = '<div class="box" >' +
+            		'<h2>Bio-Medical Library</h2>'+
+            		'<img src="images/lib.png" >' +
+            		'<h3>Provides academic resources, internet and a place to study</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow20 = new google.maps.InfoWindow({
+            		content: contentString20
+            	});
+            	
+            	twn.addListener('click', function() {
+            	infowindow20.open(map, twn);
+            	});
+            	//-----------------
+            	
+            	var tw1 = new google.maps.Marker({
+            		position: {lat: 44.973106, lng: -93.242983 },
+            		map: map,
+            		title: 'Anderson Library',
+            		icon: image 
+            		
+            	})
+            	var contentString21 = '<div class="box" >' +
+            		'<h2>Anderson Library</h2>'+
+            		'<img src="images/lib.png" >' +
+            		'<h3>Provides academic resources, internet and a place to study</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow21 = new google.maps.InfoWindow({
+            		content: contentString21
+            	});
+            	
+            	tw1.addListener('click', function() {
+            	infowindow21.open(map, tw1);
+            	});
+            	//-----------------
+            	
+            	var tw2 = new google.maps.Marker({
+            		position: {lat: 44.973007, lng: -93.244050 },
+            		map: map,
+            		title: 'Law Library',
+            		icon: image 
+            		
+            	})
+            	var contentString22 = '<div class="box" >' +
+            		'<h2>Law Library</h2>'+
+            		'<img src="images/lib.png" >' +
+            		'<h3>Provides academic resources, internet and a place to study</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow22 = new google.maps.InfoWindow({
+            		content: contentString22
+            	});
+            	
+            	tw2.addListener('click', function() {
+            	infowindow22.open(map, tw2);
+            	});
+            	//-----------------
+            	
+            	var tw3 = new google.maps.Marker({
+            		position: {lat: 44.975027, lng: -93.236288 },
+            		map: map,
+            		title: 'Science & Engineering Library',
+            		icon: image 
+            		
+            	})
+            	var contentString23 = '<div class="box" >' +
+            		'<h2>Science & Engineering Library</h2>'+
+            		'<img src="images/lib.png" >' +
+            		'<h3>Provides academic resources, internet and a place to study</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow23 = new google.maps.InfoWindow({
+            		content: contentString23
+            	});
+            	
+            	tw3.addListener('click', function() {
+            	infowindow23.open(map, tw3);
+            	});
+            	//-----------------
+            	
+            	var tw4 = new google.maps.Marker({
+            		position: {lat: 44.974476, lng: -93.234713 },
+            		map: map,
+            		title: 'Mathematics Library',
+            		icon: image 
+            		
+            	})
+            	var contentString24 = '<div class="box" >' +
+            		'<h2>Mathematics Library</h2>'+
+            		'<img src="images/lib.png" >' +
+            		'<h3>Provides academic resources, internet and a place to study</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow24 = new google.maps.InfoWindow({
+            		content: contentString24
+            	});
+            	
+            	tw4.addListener('click', function() {
+            	infowindow24.open(map, tw4);
+            	});
+            	//-----------------
+            	
+            	var tw5 = new google.maps.Marker({
+            		position: {lat: 44.970819, lng: -93.241792 },
+            		map: map,
+            		title: 'Music Library',
+            		icon: image 
+            		
+            	})
+            	var contentString25 = '<div class="box" >' +
+            		'<h2>Music Library</h2>'+
+            		'<img src="images/lib.png" >' +
+            		'<h3>Provides academic resources, internet and a place to study</h3>'+
+            		'</div>' ;
+            	
+            	var infowindow25 = new google.maps.InfoWindow({
+            		content: contentString25
+            	});
+            	
+            	tw5.addListener('click', function() {
+            	infowindow25.open(map, tw5);
+            	});
+            	//-----------------
+            	
+            			
+            	//-------------------------------------------------------------------------------------------------------------------------------------
+            }
+            
+            function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+            	var travel = document.getElementById('travel').value
+            	if (travel == 'd'){
+            		travel = google.maps.TravelMode.DRIVING
+            	} else if (travel == 'w'){
+            		travel = google.maps.TravelMode.WALKING
+            	} else if (travel == 'b'){
+            		travel = google.maps.TravelMode.BICYCLING
+            	} else{
+            		travel = google.maps.TravelMode.TRANSIT
+            	}
+            	
+            	directionsService.route({
+            		origin: document.getElementById('start').value,
+            		destination: myMarker.getPosition(),
+            		travelMode: travel
+            	}, function(response, status) {
+            		if (status === google.maps.DirectionsStatus.OK) {
+            			directionsDisplay.setDirections(response);
+            		} else {
+            			window.alert('Directions request failed due to ' + status);
+            		}
+            	});
+            }
+            
+            
+            
+               
+        </script>
+        <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMdF13EeMy6GfCmOKgNpqLe1Selm2JUnY&signed_in=true&callback=initMap"></script>
+    </body>
+</html>

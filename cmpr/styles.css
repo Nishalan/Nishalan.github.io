@@ -1,0 +1,50 @@
+/*
+* CSci4131 Fall 2015
+* Assignment# 3
+* name: Nishalan Nair Revi Andran
+* student id: 4962305
+* x500 id: revia001
+*/
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#map {
+    position: absolute;
+	height: 100%;
+	width: 100%;
+	padding-top:1px:
+	padding-left:1px;
+}
+
+div.box{
+    text-align: center;
+    height: 310px ;
+    width: 250px;
+   
+}
+
+#flopanel{
+    position: absolute;
+    font-size:110%;
+    font-weight:bold;
+    background-color:rgba(255, 196, 0, 0.5);
+    border-radius: 5px;
+    border: 4px solid #800000;
+    padding: 25px; 
+    z-index: 3;
+}
+
+div.box>img{
+    height:50%;
+    border-style: ridge;
+    border-width: 8px; 
+    
+}
+
+h1{
+    font-size: 90%;
+}
